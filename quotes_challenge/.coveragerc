@@ -1,0 +1,3 @@
+[run]
+source = quotes_challenge
+omit = quotes_challenge/test*

@@ -1,6 +1,6 @@
 from requests_mock import mock
 
-from quotes import API_URL, get_quotes, get_quote
+from ..quotes import API_URL, get_quotes, get_quote
 
 
 def test_get_quotes():
