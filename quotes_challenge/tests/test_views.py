@@ -1,7 +1,7 @@
 from pyramid.testing import DummyRequest
 from unittest.mock import patch
 
-from ..views import home_view, quotes_view
+from ..views import home_view, quotes_view, quote_view
 
 
 def test_home_view():
@@ -14,3 +14,12 @@ def test_quotes_view(get_quotes):
     get_quotes.return_value = {'quotes': 'python -m this'.split()}
     response = quotes_view(DummyRequest())
     assert('quotes' in response)
+    assert(isinstance(response.get('quotes'), list))
+
+
+@patch('quotes_challenge.views.get_quote')
+def test_quote_view(get_quote):
+    get_quote.return_value = {'quotes': 'Fly with the zen of python'}
+    response = quote_view(DummyRequest())
+    assert('quotes' in response)
+    assert(isinstance(response.get('quotes'), str))
