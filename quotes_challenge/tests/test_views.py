@@ -18,8 +18,16 @@ def test_quotes_view(get_quotes):
 
 
 @patch('quotes_challenge.views.get_quote')
-def test_chosen_quote_view(get_quote):
+def test_valid_chosen_quote_view(get_quote):
     get_quote.return_value = {'quotes': 'Fly with the zen of python'}
     response = chosen_quote_view(DummyRequest())
     assert('quotes' in response)
     assert(isinstance(response.get('quotes'), str))
+
+
+@patch('quotes_challenge.views.get_quote')
+def test_invalid_chosen_quote_view(get_quote):
+    get_quote.side_effect = ValueError('The quote was not found')
+    response = chosen_quote_view(DummyRequest())
+    assert(response.status_code == 404)
+    assert(str(response) == 'The quote was not found')

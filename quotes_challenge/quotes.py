@@ -11,4 +11,6 @@ def get_quotes():
 
 def get_quote(quote_number):
     response = requests.get(f'{API_URL}{quote_number}')
+    if response.status_code == 404:
+        raise ValueError('The quote was not found.')
     return response.json()

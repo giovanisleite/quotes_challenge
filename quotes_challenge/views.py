@@ -1,3 +1,6 @@
+from random import randint
+
+from pyramid.httpexceptions import HTTPNotFound
 from pyramid.view import view_config
 from pyramid.response import Response
 from pyramid.view import notfound_view_config
@@ -18,7 +21,17 @@ def quotes_view(request):
 @view_config(route_name='chosen_quote', renderer='templates/quote.jinja2')
 def chosen_quote_view(request):
     quote_id = request.matchdict.get('choice')
-    return get_quote(quote_id)
+    try:
+        return get_quote(quote_id)
+    except ValueError as value_error:
+        return HTTPNotFound(value_error)
+
+
+@view_config(route_name='random_quote', renderer='templates/quote.jinja2')
+def random_quote_view(request):
+    quotes = get_quotes().get('quotes')
+    random = randint(0, len(quotes))
+    return {'id': random, 'quote': quotes[random]}
 
 
 @notfound_view_config(renderer='templates/404.jinja2')
