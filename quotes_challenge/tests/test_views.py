@@ -31,3 +31,9 @@ def test_invalid_chosen_quote_view(get_quote):
     response = chosen_quote_view(DummyRequest())
     assert(response.status_code == 404)
     assert(str(response) == 'The quote was not found')
+
+
+def test_session():
+    request = DummyRequest()
+    home_view(request)
+    assert('id' in request.session)
