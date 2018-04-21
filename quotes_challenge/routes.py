@@ -2,4 +2,4 @@ def includeme(config):
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
     config.add_route('quotes', '/quotes')
-    config.add_route('quote', 'quote/{choice:[\d]*}')
+    config.add_route('chosen_quote', 'quote/{choice:[\d]*}')

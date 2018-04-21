@@ -15,8 +15,8 @@ def quotes_view(request):
     return get_quotes()
 
 
-@view_config(route_name='quote', renderer='templates/quote.jinja2')
-def quote_view(request):
+@view_config(route_name='chosen_quote', renderer='templates/quote.jinja2')
+def chosen_quote_view(request):
     quote_id = request.matchdict.get('choice')
     return get_quote(quote_id)
 
