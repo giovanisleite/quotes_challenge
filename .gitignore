@@ -20,4 +20,4 @@ Data.fs*
 coverage
 test
 *cache*
-.sqlite
+*.sqlite
