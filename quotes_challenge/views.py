@@ -5,7 +5,6 @@ from uuid import uuid1
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.view import view_config
 from pyramid.response import Response
-from pyramid.view import notfound_view_config
 
 from .quotes import get_quotes, get_quote
 from .models import User, Access
@@ -55,10 +54,3 @@ def random_quote_view(request):
     quotes = get_quotes().get('quotes')
     random = randint(0, len(quotes))
     return {'id': random, 'quote': quotes[random]}
-
-
-@notfound_view_config(renderer='templates/404.jinja2')
-@register_session
-def notfound_view(request):
-    request.response.status = 404
-    return {}
