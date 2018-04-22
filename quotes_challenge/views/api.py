@@ -20,6 +20,9 @@ class SessionView:
 
     def get(self):
         session = self.request.dbsession.query(Session).get(self.request.matchdict.get('uuid'))
+        if not session:
+            self.request.response.status = 400
+            return {'error': 'Not found'}
         return {'session': session}
 
     def put(self):
@@ -31,5 +34,8 @@ class SessionView:
 
     def delete(self):
         session = self.request.dbsession.query(Session).get(self.request.matchdict.get('uuid'))
+        if not session:
+            self.request.response.status = 400
+            return {'error': 'Not found'}
         self.request.dbsession.delete(session)
         return {'session': session}
