@@ -20,3 +20,6 @@ class Access(Base):
 
     user_uuid = Column(ForeignKey('users.uuid'), nullable=False)
     user = relationship('User', backref='accesses')
+
+    def __json__(self, request):
+        return {'page': self.page, 'datetime': self.datetime.isoformat()}

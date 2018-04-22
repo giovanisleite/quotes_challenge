@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from . import BaseTest, dummy_request
-from ..views import home_view, quotes_view, chosen_quote_view, random_quote_view
+from ..views.quotes import home, all_quotes, single_quote, random
 from ..models import User
 
 
@@ -10,46 +10,46 @@ class TestViews(BaseTest):
         super(TestViews, self).setUp()
         self.init_database()
 
-    def test_home_view(self):
-        response = home_view(dummy_request(self.session))
+    def test_home(self):
+        response = home(dummy_request(self.session))
         assert(response.status_int == 200)
 
-    @patch('quotes_challenge.views.get_quotes')
-    def test_quotes_view(self, get_quotes):
+    @patch('quotes_challenge.views.quotes.get_quotes')
+    def test_all_quotes(self, get_quotes):
         get_quotes.return_value = {'quotes': 'python -m this'.split()}
-        response = quotes_view(dummy_request(self.session))
+        response = all_quotes(dummy_request(self.session))
         assert('quotes' in response)
         assert(isinstance(response.get('quotes'), list))
 
-    @patch('quotes_challenge.views.get_quote')
-    def test_valid_chosen_quote_view(self, get_quote):
+    @patch('quotes_challenge.views.quotes.get_quote')
+    def test_valid_single_quote(self, get_quote):
         get_quote.return_value = {'quotes': 'Fly with the zen of python'}
-        response = chosen_quote_view(dummy_request(self.session))
+        response = single_quote(dummy_request(self.session))
         assert('quotes' in response)
         assert(isinstance(response.get('quotes'), str))
 
-    @patch('quotes_challenge.views.get_quote')
-    def test_invalid_chosen_quote_view(self, get_quote):
+    @patch('quotes_challenge.views.quotes.get_quote')
+    def test_invalid_single_quote(self, get_quote):
         get_quote.side_effect = ValueError('The quote was not found')
-        response = chosen_quote_view(dummy_request(self.session))
+        response = single_quote(dummy_request(self.session))
         assert(response.status_code == 404)
         assert(str(response) == 'The quote was not found')
 
     def test_register_session(self):
         request = dummy_request(self.session)
-        home_view(request)
+        home(request)
         assert('id' in request.session)
 
     def test_create_user(self):
         request = dummy_request(self.session)
-        home_view(request)
+        home(request)
         query = request.dbsession.query(User).filter_by(uuid=request.session['id'])
         assert(query.count() == 1)
 
     def test_register_accesses(self):
         request = dummy_request(self.session)
         paths = ['/', '/quotes', '/quotes/random']
-        views = [home_view, quotes_view, random_quote_view]
+        views = [home, all_quotes, random]
         for path, view in zip(paths, views):
             request.path = path
             view(request)

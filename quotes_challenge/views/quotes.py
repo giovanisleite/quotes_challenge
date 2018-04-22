@@ -6,8 +6,8 @@ from pyramid.httpexceptions import HTTPNotFound
 from pyramid.view import view_config
 from pyramid.response import Response
 
-from .quotes import get_quotes, get_quote
-from .models import User, Access
+from ..quotes import get_quotes, get_quote
+from ..models import User, Access
 
 
 def register_session(view):
@@ -28,19 +28,19 @@ def register_session(view):
 
 @view_config(route_name='home')
 @register_session
-def home_view(request):
+def home(request):
     return Response('<h1>Desafio Web 1.0</h1>')
 
 
 @view_config(route_name='quotes', renderer='templates/quotes.jinja2')
 @register_session
-def quotes_view(request):
+def all_quotes(request):
     return get_quotes()
 
 
 @view_config(route_name='chosen_quote', renderer='templates/quote.jinja2')
 @register_session
-def chosen_quote_view(request):
+def single_quote(request):
     quote_id = request.matchdict.get('choice')
     try:
         return get_quote(quote_id)
@@ -50,7 +50,7 @@ def chosen_quote_view(request):
 
 @view_config(route_name='random_quote', renderer='templates/quote.jinja2')
 @register_session
-def random_quote_view(request):
+def random(request):
     quotes = get_quotes().get('quotes')
     random = randint(0, len(quotes))
     return {'id': random, 'quote': quotes[random]}
