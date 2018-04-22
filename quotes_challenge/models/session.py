@@ -6,10 +6,13 @@ from sqlalchemy import (
 from .meta import Base
 
 
-class User(Base):
-    """ The SQLAlchemy declarative model class for a User object. """
-    __tablename__ = 'users'
+class Session(Base):
+    __tablename__ = 'sessions'
     uuid = Column(Text, primary_key=True)
 
     def __json__(self, request):
         return {'uuid': self.uuid, 'accesses': self.accesses}
+
+    @classmethod
+    def from_json(cls, data):
+        return cls(**data)

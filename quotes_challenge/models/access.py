@@ -18,8 +18,12 @@ class Access(Base):
     page = Column(Text, nullable=False)
     datetime = Column(DateTime, nullable=False)
 
-    user_uuid = Column(ForeignKey('users.uuid'), nullable=False)
-    user = relationship('User', backref='accesses')
+    session_uuid = Column(ForeignKey('sessions.uuid'), nullable=False)
+    session = relationship('Session', backref='accesses')
 
     def __json__(self, request):
         return {'page': self.page, 'datetime': self.datetime.isoformat()}
+
+    @classmethod
+    def from_json(cls, data):
+        return cls(**data)

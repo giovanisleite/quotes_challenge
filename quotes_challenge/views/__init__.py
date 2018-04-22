@@ -1,20 +1,19 @@
 from datetime import datetime
 from uuid import uuid1
 
-from ..models import User, Access
+from ..models import Session, Access
 
 
 def register_session(view):
     '''A decorator for views to register accesses'''
     def wrapper(request, *args, **kwargs):
-        session = request.session
-        if 'id' not in session:
-            user = User(uuid=str(uuid1()))
-            session['id'] = user.uuid
-            request.dbsession.add(user)
+        if 'id' not in request.session:
+            session = Session(uuid=str(uuid1()))
+            request.session['id'] = session.uuid
+            request.dbsession.add(session)
         else:
-            user = request.dbsession.query(User).filter_by(uuid=request.session['id']).one()
-        access = Access(page=request.path, datetime=datetime.now(), user=user)
+            session = request.dbsession.query(Session).filter_by(uuid=request.session['id']).one()
+        access = Access(page=request.path, datetime=datetime.now(), session=session)
         request.dbsession.add(access)
         return view(request, *args, **kwargs)
     return wrapper

@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 from . import BaseTest, dummy_request
 from ..views.quotes import home, all_quotes, single_quote, random
-from ..models import User
+from ..models import Session
 
 
 class TestViews(BaseTest):
@@ -40,10 +40,10 @@ class TestViews(BaseTest):
         home(request)
         assert('id' in request.session)
 
-    def test_create_user(self):
+    def test_create_session(self):
         request = dummy_request(self.session)
         home(request)
-        query = request.dbsession.query(User).filter_by(uuid=request.session['id'])
+        query = request.dbsession.query(Session).filter_by(uuid=request.session['id'])
         assert(query.count() == 1)
 
     def test_register_accesses(self):
@@ -54,6 +54,6 @@ class TestViews(BaseTest):
             request.path = path
             view(request)
 
-        user = request.dbsession.query(User).filter_by(uuid=request.session['id']).one()
-        assert(len(user.accesses) == 3)
-        assert(paths == [access.page for access in user.accesses])
+        session = request.dbsession.query(Session).filter_by(uuid=request.session['id']).one()
+        assert(len(session.accesses) == 3)
+        assert(paths == [access.page for access in session.accesses])
