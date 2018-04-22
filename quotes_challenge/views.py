@@ -1,3 +1,4 @@
+from datetime import datetime
 from random import randint
 from uuid import uuid1
 
@@ -7,22 +8,28 @@ from pyramid.response import Response
 from pyramid.view import notfound_view_config
 
 from .quotes import get_quotes, get_quote
+from .models import User, Access
 
 
 def register_session(view):
-    '''A decorator for views to give an id to the session'''
+    '''A decorator for views to register accesses'''
     def wrapper(request, *args, **kwargs):
         session = request.session
         if 'id' not in session:
-            session['id'] = uuid1()
-        return view(request)
+            user = User(uuid=str(uuid1()))
+            session['id'] = user.uuid
+            request.dbsession.add(user)
+        else:
+            user = request.dbsession.query(User).filter_by(uuid=request.session['id']).one()
+        access = Access(page=request.path, datetime=datetime.now(), user=user)
+        request.dbsession.add(access)
+        return view(request, *args, **kwargs)
     return wrapper
 
 
 @view_config(route_name='home')
 @register_session
 def home_view(request):
-    print(request.session)
     return Response('<h1>Desafio Web 1.0</h1>')
 
 
