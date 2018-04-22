@@ -48,8 +48,12 @@ class TestViews(BaseTest):
 
     def test_register_accesses(self):
         request = dummy_request(self.session)
-        home_view(request)
-        quotes_view(request)
-        random_quote_view(request)
+        paths = ['/', '/quotes', '/quotes/random']
+        views = [home_view, quotes_view, random_quote_view]
+        for path, view in zip(paths, views):
+            request.path = path
+            view(request)
+
         user = request.dbsession.query(User).filter_by(uuid=request.session['id']).one()
         assert(len(user.accesses) == 3)
+        assert(paths == [access.page for access in user.accesses])
