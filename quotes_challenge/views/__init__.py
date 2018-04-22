@@ -12,7 +12,7 @@ def register_session(view):
             request.session['id'] = session.uuid
             request.dbsession.add(session)
         else:
-            session = request.dbsession.query(Session).filter_by(uuid=request.session['id']).one()
+            session = request.dbsession.query(Session).get(request.session['id'])
         access = Access(page=request.path, datetime=datetime.now(), session=session)
         request.dbsession.add(access)
         return view(request, *args, **kwargs)

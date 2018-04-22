@@ -9,6 +9,7 @@ def main(global_config, **settings):
     config = Configurator(settings=settings,
                           session_factory=my_session_factory)
     config.include('pyramid_jinja2')
+    config.include('cornice')
     config.include('.models')
     config.include('.routes')
     config.scan()
